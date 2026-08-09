@@ -1,0 +1,14 @@
+{
+  "name": "Navkar Photography",
+  "short_name": "Navkar Photography",
+  "description": "Wedding and religious photography by Navkar Photography.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f2ec",
+  "theme_color": "#181715",
+  "icons": [
+    {"src":"android-chrome-192x192.png","sizes":"192x192","type":"image/png"},
+    {"src":"android-chrome-512x512.png","sizes":"512x512","type":"image/png"}
+  ]
+}
