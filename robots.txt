@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-# Add your live-domain sitemap URL here after deployment.
-# Sitemap: https://navkar-photography.vercel.app/sitemap.xml
