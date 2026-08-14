@@ -34,9 +34,37 @@
                 <h1>Jheel <em>&amp; Neeraj</em></h1>
             </section>
 
-            <section class="album-gallery-grid">
-                <img src="assets/wedding/Jheel%20%26%20Neeraj/VAN_0002.JPG"
-                    alt="Jheel and Neeraj wedding photo 1" loading="lazy" />
+            <section class="album-gallery-grid" data-bucket="wedding-jheel-neeraj">
+                <!-- Images load dynamically from Supabase -->
+            </section>
+            <!-- Lightbox -->
+            <div id="lightbox" class="lightbox" aria-hidden="true">
+                <button id="lightboxClose" class="lightbox-close" aria-label="Close lightbox">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <img id="lightboxImage" src="" alt="Lightbox image" />
+                <div class="lightbox-controls">
+                    <button id="lightboxPrev" aria-label="Previous image">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button id="lightboxNext" aria-label="Next image">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div id="lightboxMeta" class="lightbox-meta"></div>
+            </div>
+
+            </section>
+        </main>
+
+        <!-- Supabase Library -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <!-- Supabase Configuration -->
+        <script src="supabase-config.js"></script>
+        <!-- Main Script -->
+        <script src="script.js"></script>
+    </body>
+</html>
                 <img src="assets/wedding/Jheel%20%26%20Neeraj/VAN_0004.JPG"
                     alt="Jheel and Neeraj wedding photo 2" loading="lazy" />
                 <img src="assets/wedding/Jheel%20%26%20Neeraj/VAN_0343.JPG"
@@ -173,5 +201,11 @@
                     alt="Jheel and Neeraj wedding photo 68" loading="lazy" />
             </section>
         </main>
+        <!-- Supabase Library -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <!-- Supabase Configuration -->
+        <script src="supabase-config.js"></script>
+        <!-- Main Script -->
+        <script src="script.js"></script>
     </body>
 </html>
