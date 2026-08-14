@@ -57,15 +57,15 @@ function getPublicImageUrl(bucketName, fileName) {
 // Function to upload image to Supabase
 async function uploadImageToSupabase(file, bucketName) {
   try {
-    const fileName = `${Date.now()}-${file.name}`;
-
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const fileName = `${Date.now()}-${sanitizedName}`;
     const { data, error } = await supabaseClient.storage
       .from(bucketName)
       .upload(fileName, file);
 
     if (error) {
       console.error("Upload error:", error);
-      return null;
+      return { error: error.message };
     }
 
     return {
@@ -75,7 +75,7 @@ async function uploadImageToSupabase(file, bucketName) {
     };
   } catch (err) {
     console.error("Error uploading image:", err);
-    return null;
+    return { error: err.message };
   }
 }
 
