@@ -36,6 +36,25 @@ Once your project is created:
 - Make it **Public** (so images are accessible on your website)
 - Click the bucket settings ⚙️ and toggle **Public bucket** to ON
 
+### Allow Uploads (Storage Policies via SQL)
+Since the Supabase dashboard UI changes frequently, the easiest way to enable uploads is by running a quick SQL command.
+
+1. In your Supabase dashboard, click on **SQL Editor** in the left sidebar.
+2. Click **New Query**.
+3. Paste the following SQL code exactly as it is:
+```sql
+-- Enable read access for everyone
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT TO public USING (true);
+
+-- Enable uploads for your admin panel (using anon key)
+CREATE POLICY "Allow Uploads" ON storage.objects FOR INSERT TO public WITH CHECK (true);
+
+-- Enable deletes for your admin panel (using anon key)
+CREATE POLICY "Allow Deletes" ON storage.objects FOR DELETE TO public USING (true);
+```
+4. Click the **Run** button (or press `Cmd/Ctrl + Enter`).
+5. You should see a "Success" message. Your buckets are now ready to accept uploads!
+
 ## Step 4: Update Configuration File
 
 1. Open `supabase-config.js` in your project folder
