@@ -457,7 +457,7 @@
         <script>
         let selectedFiles = [];
         let currentBucket = '';
-        const adminPassword = 'your-secure-password-here'; // Change this!
+        const adminPassword = typeof ADMIN_PASSWORD !== 'undefined' ? ADMIN_PASSWORD : 'Karan2112'; // Fallback just in case
 
         function loginAdmin() {
             const password = document.getElementById('adminPassword').value;
