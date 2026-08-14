@@ -214,7 +214,7 @@ if (lb) {
 }
 
 /* v14 interaction layer: reveal animations + robust mobile menu state */
-document.addEventListener("DOMContentLoaded", () => {
+function initInteractions() {
   const revealTargets = [
     ".approach > .mini-label",
     ".approach-grid",
@@ -248,30 +248,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const revealObserver =
-    "IntersectionObserver" in window
-      ? new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("is-visible");
-                revealObserver.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.12, rootMargin: "0px 0px -7% 0px" },
-        )
-      : null;
-  $$(".reveal-ready").forEach((el) =>
-    revealObserver
-      ? revealObserver.observe(el)
-      : el.classList.add("is-visible"),
+  const obs = new IntersectionObserver(
+    (ents) => {
+      ents.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          obs.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
   );
+  $$(".reveal-ready:not(.is-visible)").forEach((el) => obs.observe(el));
 
-  // Mobile menu: lock only the document, never the menu's own scroll area.
-  const menu = $("#mobileNav");
-  const menuButton = $("#hamb");
-  const closeButton = $("#mobileNavClose");
+  const menuButton = document.getElementById("hamb");
+  const menu = document.getElementById("mobileNav");
+  const closeButton = document.getElementById("mobileNavClose");
   const setMobileMenu = (open) => {
     if (!menu) return;
     menu.classList.toggle("open", open);
@@ -288,7 +280,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") setMobileMenu(false);
   });
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", initInteractions);
+} else {
+  initInteractions();
+}
 
 /* Supabase Gallery Loader */
 async function loadGalleryFromSupabase(bucketName) {
@@ -400,7 +398,7 @@ function reinitializeLightbox() {
 }
 
 /* Auto-load galleries on page load */
-document.addEventListener("DOMContentLoaded", () => {
+function initGalleries() {
   // Check if page has gallery containers with data-bucket attribute
   const galleryContainers = document.querySelectorAll("[data-bucket]");
   galleryContainers.forEach((container) => {
@@ -409,4 +407,10 @@ document.addEventListener("DOMContentLoaded", () => {
       loadGalleryFromSupabase(bucket);
     }
   });
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", initGalleries);
+} else {
+  initGalleries();
+}
