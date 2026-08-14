@@ -34,9 +34,36 @@
                 <h1>Mauli <em>&amp; Pankil</em></h1>
             </section>
 
-            <section class="album-gallery-grid">
-                <img src="assets/wedding/Mauli%20%26%20Pankil/0G5A0005.JPG"
-                    alt="Mauli and Pankil wedding photo 1" loading="lazy" />
+            <section class="album-gallery-grid" data-bucket="wedding-mauli-pankil">
+                <!-- Images load dynamically from Supabase -->
+            </section>
+        </main>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" aria-hidden="true">
+            <button id="lightboxClose" class="lightbox-close" aria-label="Close lightbox">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="lightboxImage" src="" alt="Lightbox image" />
+            <div class="lightbox-controls">
+                <button id="lightboxPrev" aria-label="Previous image">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button id="lightboxNext" aria-label="Next image">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div id="lightboxMeta" class="lightbox-meta"></div>
+        </div>
+
+        <!-- Supabase Library -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <!-- Supabase Configuration -->
+        <script src="supabase-config.js"></script>
+        <!-- Main Script -->
+        <script src="script.js"></script>
+    </body>
+</html>
                 <img src="assets/wedding/Mauli%20%26%20Pankil/0G5A0030.JPG"
                     alt="Mauli and Pankil wedding photo 2" loading="lazy" />
                 <img src="assets/wedding/Mauli%20%26%20Pankil/0G5A0035.JPG"
