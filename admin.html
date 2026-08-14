@@ -530,17 +530,25 @@
             document.getElementById('uploadBtn').disabled = true;
             document.getElementById('progressBar').classList.add('active');
             let uploaded = 0;
+            let lastError = null;
 
             for (const file of selectedFiles) {
                 const result = await SupabaseAPI.uploadImageToSupabase(file, currentBucket);
-                if (result) {
+                if (result && !result.error) {
                     uploaded++;
+                } else if (result && result.error) {
+                    lastError = result.error;
                 }
                 const progress = (uploaded / selectedFiles.length) * 100;
                 document.getElementById('progressFill').style.width = progress + '%';
             }
 
-            showStatus(`Successfully uploaded ${uploaded}/${selectedFiles.length} images`, 'success');
+            if (uploaded === selectedFiles.length) {
+                showStatus(`Successfully uploaded ${uploaded}/${selectedFiles.length} images`, 'success');
+            } else {
+                showStatus(`Uploaded ${uploaded}/${selectedFiles.length} images. Error: ${lastError || 'Unknown error'}`, 'error');
+            }
+            
             selectedFiles = [];
             document.getElementById('imageInput').value = '';
             updateFileList();
