@@ -4,6 +4,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Navkar Photography - Admin Panel</title>
+        <link href="https://fonts.googleapis.com" rel="preconnect"/>
+        <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet"/>
+        <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" referrerpolicy="no-referrer" rel="stylesheet"/>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico?v=3">
         <style>
         * {
             margin: 0;
@@ -12,8 +17,9 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'DM Sans', sans-serif;
+            background: #f5f2ec;
+            color: #24211e;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -21,34 +27,43 @@
             padding: 20px;
         }
 
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 500;
+        }
+
         .admin-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: #fff;
+            border: 1px solid rgba(30, 28, 25, 0.1);
+            border-radius: 2px;
             max-width: 900px;
             width: 100%;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
         }
 
         .admin-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
+            background: #24211e;
+            color: #f5f2ec;
+            padding: 40px 30px;
             text-align: center;
         }
 
         .admin-header h1 {
-            font-size: 28px;
+            font-size: 32px;
             margin-bottom: 10px;
+            font-style: italic;
         }
 
         .admin-header p {
-            opacity: 0.9;
-            font-size: 14px;
+            opacity: 0.8;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
         .admin-content {
-            padding: 30px;
+            padding: 40px 30px;
         }
 
         /* Login Section */
@@ -60,34 +75,53 @@
         .login-section.active {
             display: block;
         }
+        
+        .login-section h2 {
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-style: italic;
+        }
 
         .login-section input {
             width: 100%;
             max-width: 300px;
-            padding: 12px;
-            margin: 15px auto;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
+            padding: 15px;
+            margin: 20px auto;
+            border: 1px solid rgba(30, 28, 25, 0.2);
+            border-radius: 2px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
             display: block;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .login-section input:focus {
+            border-color: #24211e;
         }
 
         .login-section button {
-            background: #667eea;
-            color: white;
+            background: #24211e;
+            color: #f5f2ec;
             border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
+            padding: 15px 40px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
             transition: all 0.3s;
         }
 
         .login-section button:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #3a3631;
+        }
+        
+        .login-section p {
+            margin-top: 25px;
+            color: #777;
+            font-size: 12px;
         }
 
         /* Upload Section */
@@ -98,50 +132,64 @@
         .upload-section.active {
             display: block;
         }
+        
+        .upload-section h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-style: italic;
+        }
 
         .logout-btn {
             float: right;
-            background: #e74c3c;
-            color: white;
-            border: none;
+            background: transparent;
+            color: #24211e;
+            border: 1px solid rgba(30, 28, 25, 0.2);
             padding: 8px 16px;
-            border-radius: 4px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
             transition: all 0.3s;
         }
 
         .logout-btn:hover {
-            background: #c0392b;
+            background: #24211e;
+            color: #f5f2ec;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             clear: both;
         }
 
         .form-group label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 16px;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            color: #777;
         }
 
         .form-group select,
         .form-group input[type="file"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
+            padding: 15px;
+            border: 1px solid rgba(30, 28, 25, 0.2);
+            border-radius: 2px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            color: #24211e;
             transition: border-color 0.3s;
+            outline: none;
+            cursor: pointer;
+            background: #fff;
         }
 
-        .form-group select:focus,
-        .form-group input[type="file"]:focus {
-            outline: none;
-            border-color: #667eea;
+        .form-group select:focus {
+            border-color: #24211e;
         }
 
         .file-input-wrapper {
@@ -153,20 +201,20 @@
 
         .file-input-label {
             display: block;
-            padding: 12px;
-            background: #f8f9fa;
-            border: 2px dashed #667eea;
-            border-radius: 6px;
+            padding: 30px 15px;
+            background: #fcfcfc;
+            border: 1px dashed rgba(30, 28, 25, 0.3);
+            border-radius: 2px;
             cursor: pointer;
             text-align: center;
-            color: #667eea;
-            font-weight: bold;
+            color: #777;
+            font-size: 14px;
             transition: all 0.3s;
         }
 
         .file-input-label:hover {
-            background: #667eea;
-            color: white;
+            border-color: #24211e;
+            color: #24211e;
         }
 
         input[type="file"] {
@@ -177,67 +225,68 @@
             margin-top: 20px;
             max-height: 300px;
             overflow-y: auto;
-            background: #f8f9fa;
-            border-radius: 6px;
+            background: #fcfcfc;
+            border: 1px solid rgba(30, 28, 25, 0.1);
+            border-radius: 2px;
             padding: 15px;
         }
 
         .file-item {
-            padding: 8px 12px;
-            background: white;
+            padding: 10px;
+            background: #fff;
             margin: 5px 0;
-            border-radius: 4px;
+            border: 1px solid rgba(30, 28, 25, 0.05);
+            border-radius: 2px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .file-item .remove-file {
-            background: #e74c3c;
-            color: white;
+            background: transparent;
+            color: #e74c3c;
             border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
             cursor: pointer;
             font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .file-item .remove-file:hover {
-            background: #c0392b;
+            text-decoration: underline;
         }
 
         .upload-btn {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: 16px;
+            background: #24211e;
+            color: #f5f2ec;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 30px;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            margin-top: 10px;
         }
 
         .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            background: #3a3631;
         }
 
         .upload-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: not-allowed;
-            transform: none;
         }
 
         .progress-bar {
             width: 100%;
-            height: 4px;
-            background: #ddd;
-            border-radius: 2px;
-            overflow: hidden;
-            margin: 20px 0;
+            height: 2px;
+            background: rgba(30, 28, 25, 0.1);
+            margin: 25px 0;
             display: none;
         }
 
@@ -247,17 +296,18 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: #24211e;
             width: 0%;
             transition: width 0.3s;
         }
 
         .status-message {
-            padding: 12px;
-            border-radius: 6px;
-            margin: 15px 0;
+            padding: 15px;
+            border-radius: 2px;
+            margin: 20px 0;
             display: none;
-            font-weight: bold;
+            font-size: 13px;
+            text-align: center;
         }
 
         .status-message.active {
@@ -265,73 +315,81 @@
         }
 
         .status-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #f5f2ec;
+            color: #24211e;
+            border: 1px solid rgba(30, 28, 25, 0.2);
         }
 
         .status-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fdf5f5;
+            color: #c0392b;
+            border: 1px solid #fadbd8;
         }
 
         .status-message.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background: #f4f6f7;
+            color: #2c3e50;
+            border: 1px solid #d5dbdb;
         }
 
         .gallery-preview {
-            margin-top: 30px;
-            border-top: 2px solid #ddd;
-            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(30, 28, 25, 0.1);
+            padding-top: 40px;
         }
 
         .gallery-preview h3 {
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-style: italic;
         }
 
         .image-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            max-height: 400px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
         .image-item {
             position: relative;
             overflow: hidden;
-            border-radius: 8px;
+            border-radius: 2px;
             aspect-ratio: 1;
-            background: #f0f0f0;
+            background: #f5f2ec;
+            border: 1px solid rgba(30, 28, 25, 0.05);
         }
 
         .image-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .image-item:hover img {
+            transform: scale(1.05);
         }
 
         .image-item .delete-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            width: 28px;
-            height: 28px;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #e74c3c;
+            border: 1px solid rgba(0,0,0,0.1);
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .image-item:hover .delete-btn {
@@ -339,27 +397,36 @@
         }
 
         .image-item .delete-btn:hover {
-            background: #c0392b;
-            transform: scale(1.1);
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
         }
 
         .no-images {
             text-align: center;
-            color: #999;
-            padding: 30px;
+            color: #777;
+            padding: 40px;
+            font-style: italic;
+            border: 1px dashed rgba(30, 28, 25, 0.2);
+            border-radius: 2px;
         }
 
         @media (max-width: 600px) {
+            .admin-header {
+                padding: 30px 20px;
+            }
+
             .admin-header h1 {
-                font-size: 20px;
+                font-size: 24px;
             }
 
             .admin-content {
-                padding: 20px;
+                padding: 30px 20px;
             }
 
             .image-grid {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 10px;
             }
         }
     </style>
@@ -374,12 +441,11 @@
             <div class="admin-content">
                 <!-- Login Section -->
                 <div class="login-section active">
-                    <h2 style="margin-bottom: 20px; color: #333;">Admin
-                        Login</h2>
+                    <h2>Admin Login</h2>
                     <input type="password" id="adminPassword"
                         placeholder="Enter admin password" />
                     <button onclick="loginAdmin()">Login</button>
-                    <p style="margin-top: 20px; color: #999; font-size: 14px;">
+                    <p>
                         Default password: your-secure-password-here
                     </p>
                 </div>
@@ -389,8 +455,7 @@
                     <button class="logout-btn"
                         onclick="logoutAdmin()">Logout</button>
 
-                    <h2 style="margin-bottom: 20px; color: #333;">Upload
-                        Images</h2>
+                    <h2>Upload Images</h2>
 
                     <div class="form-group">
                         <label for="gallerySelect">Select Gallery:</label>
