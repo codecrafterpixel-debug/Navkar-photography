@@ -481,8 +481,21 @@ function reinitializeLightbox() {
 
 /* Auto-load galleries on page load */
 function initGalleries() {
-  // Existing initGalleries body will be overridden by script inserted in index.html
-  // Placeholder - actual implementation injected via index.html script
+  // Check if page has gallery containers with data-bucket attribute
+  const containers = document.querySelectorAll("[data-bucket]");
+  containers.forEach((container) => {
+    const bucket = container.dataset.bucket;
+    if (!bucket) return;
+    if (container.classList.contains('film-grid')) {
+      // Load videos for film-grid containers
+      loadVideosFromSupabase(bucket, container);
+    } else {
+      // Load images for other galleries
+      if (typeof loadGalleryFromSupabase === 'function') {
+        loadGalleryFromSupabase(bucket);
+      }
+    }
+  });
 }
 
 if (document.readyState === 'loading') {
