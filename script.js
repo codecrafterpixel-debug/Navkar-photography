@@ -19,8 +19,8 @@ if (pre) {
   });
   setTimeout(() => {
     if (bar) bar.style.width = "100%";
-  }, 260);
-  setTimeout(finish, 620);
+  }, 20);
+  setTimeout(finish, 50);
   window.addEventListener("load", finish, { once: true });
   window.addEventListener("pageshow", finish, { once: true });
 }
@@ -381,7 +381,7 @@ async function loadGalleryFromSupabase(bucketName) {
     console.error("Error loading gallery from Supabase:", error);
   }
 }
-function loadVideosFromSupabase(bucketName, container) {
+async function loadVideosFromSupabase(bucketName, container) {
   if (!window.SupabaseAPI) {
     console.error('Supabase API not loaded.');
     return;
