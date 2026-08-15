@@ -289,6 +289,49 @@ if (document.readyState === 'loading') {
 }
 
 /* Supabase Gallery Loader */
+async function uploadImages() {
+  if (!currentBucket || selectedFiles.length === 0) {
+    showStatus('Please select a gallery and files', 'error');
+    return;
+  }
+
+  document.getElementById('uploadBtn').disabled = true;
+  document.getElementById('progressBar').classList.add('active');
+  let uploaded = 0;
+  let lastError = null;
+
+  for (const file of selectedFiles) {
+    let result;
+    if (file.type.startsWith('video/')) {
+      // Upload video
+      result = await SupabaseAPI.uploadVideoToSupabase(file, currentBucket);
+    } else {
+      // Upload image
+      result = await SupabaseAPI.uploadImageToSupabase(file, currentBucket);
+    }
+    if (result && !result.error) {
+      uploaded++;
+    } else if (result && result.error) {
+      lastError = result.error;
+    }
+    const progress = (uploaded / selectedFiles.length) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+  }
+
+  if (uploaded === selectedFiles.length) {
+    showStatus(`Successfully uploaded ${uploaded}/${selectedFiles.length} files`, 'success');
+  } else {
+    showStatus(`Uploaded ${uploaded}/${selectedFiles.length} files. Error: ${lastError || 'Unknown error'}`, 'error');
+  }
+
+  selectedFiles = [];
+  document.getElementById('imageInput').value = '';
+  updateFileList();
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('uploadBtn').disabled = false;
+  loadGalleryPreview();
+}
+
 async function loadGalleryFromSupabase(bucketName) {
   // Ensure Supabase API is loaded
   if (!window.SupabaseAPI) {
@@ -301,6 +344,7 @@ async function loadGalleryFromSupabase(bucketName) {
   try {
     // Get images from the specified bucket
     const images = await window.SupabaseAPI.getImagesFromBucket(bucketName);
+    // Existing image handling
 
     // Find all gallery containers that match this bucket
     const galleryContainers = document.querySelectorAll(
@@ -337,7 +381,45 @@ async function loadGalleryFromSupabase(bucketName) {
     console.error("Error loading gallery from Supabase:", error);
   }
 }
-
+function loadVideosFromSupabase(bucketName, container) {
+  if (!window.SupabaseAPI) {
+    console.error('Supabase API not loaded.');
+    return;
+  }
+  try {
+    const videos = await window.SupabaseAPI.getVideosFromBucket(bucketName);
+    // Clear container
+    container.innerHTML = '';
+    if (videos.length === 0) {
+      container.innerHTML = '<div class="no-videos" style="text-align:center;color:#999;padding:40px;">No videos available in this gallery yet.</div>';
+      return;
+    }
+    videos.forEach((v) => {
+      const div = document.createElement('div');
+      div.className = 'video-item';
+      const video = document.createElement('video');
+      video.controls = true;
+      video.preload = 'metadata';
+      video.style.width = '100%';
+      video.style.height = 'auto';
+      const source = document.createElement('source');
+      source.src = v.url;
+      source.type = 'video/mp4';
+      video.appendChild(source);
+      video.innerHTML = 'Your browser does not support video playback.';
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.title = 'Delete';
+      delBtn.innerHTML = '🗑️';
+      delBtn.onclick = () => deleteImage(v.bucket, v.name);
+      div.appendChild(video);
+      div.appendChild(delBtn);
+      container.appendChild(div);
+    });
+  } catch (err) {
+    console.error('Error loading videos:', err);
+  }
+}
 /* Reinitialize lightbox with new images */
 function reinitializeLightbox() {
   const lb = $("#lightbox");
@@ -399,14 +481,8 @@ function reinitializeLightbox() {
 
 /* Auto-load galleries on page load */
 function initGalleries() {
-  // Check if page has gallery containers with data-bucket attribute
-  const galleryContainers = document.querySelectorAll("[data-bucket]");
-  galleryContainers.forEach((container) => {
-    const bucket = container.dataset.bucket;
-    if (bucket) {
-      loadGalleryFromSupabase(bucket);
-    }
-  });
+  // Existing initGalleries body will be overridden by script inserted in index.html
+  // Placeholder - actual implementation injected via index.html script
 }
 
 if (document.readyState === 'loading') {
