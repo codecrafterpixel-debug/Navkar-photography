@@ -49,6 +49,61 @@ async function getImagesFromBucket(bucketName) {
   }
 }
 
+// New: Get videos from bucket (supports mp4, webm, mov)
+async function getVideosFromBucket(bucketName) {
+  try {
+    const { data, error } = await supabaseClient.storage
+      .from(bucketName)
+      .list("", {
+        limit: 1000,
+        offset: 0,
+        sortBy: { column: "created_at", order: "asc" },
+      });
+
+    if (error) {
+      console.error(`Error fetching videos from ${bucketName}:`, error);
+      return [];
+    }
+
+    return data
+      .filter((file) => /\.(mp4|webm|mov)$/i.test(file.name))
+      .map((file) => ({
+        name: file.name,
+        url: getPublicImageUrl(bucketName, file.name),
+        bucket: bucketName,
+        created_at: file.created_at,
+      }));
+  } catch (err) {
+    console.error("Error in getVideosFromBucket:", err);
+    return [];
+  }
+}
+
+// New: Upload video to Supabase (mirrors image upload)
+async function uploadVideoToSupabase(file, bucketName) {
+  try {
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const fileName = `${Date.now()}-${sanitizedName}`;
+    const { data, error } = await supabaseClient.storage
+      .from(bucketName)
+      .upload(fileName, file);
+
+    if (error) {
+      console.error("Upload video error:", error);
+      return { error: error.message };
+    }
+
+    return {
+      name: fileName,
+      url: getPublicImageUrl(bucketName, fileName),
+      bucket: bucketName,
+    };
+  } catch (err) {
+    console.error("Error uploading video:", err);
+    return { error: err.message };
+  }
+}
+
 // Function to get public URL for an image
 function getPublicImageUrl(bucketName, fileName) {
   return `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${fileName}`;
