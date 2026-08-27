@@ -503,3 +503,30 @@ if (document.readyState === 'loading') {
 } else {
   initGalleries();
 }
+
+/* Auto-load first image from Supabase bucket as album card cover */
+async function initCoverImages() {
+  const coverEls = document.querySelectorAll('[data-cover-bucket]');
+  if (!coverEls.length) return;
+  if (!window.SupabaseAPI) {
+    console.warn('SupabaseAPI not ready for cover images');
+    return;
+  }
+  for (const el of coverEls) {
+    const bucket = el.dataset.coverBucket;
+    try {
+      const images = await window.SupabaseAPI.getImagesFromBucket(bucket);
+      if (images && images.length > 0) {
+        el.style.backgroundImage = `url('${images[0].url}')`;
+      }
+    } catch (err) {
+      console.error(`Error loading cover for bucket ${bucket}:`, err);
+    }
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCoverImages);
+} else {
+  initCoverImages();
+}
