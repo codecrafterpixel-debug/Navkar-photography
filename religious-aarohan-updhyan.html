@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Aarohan Updhyan Tap | Navkar Photography</title>
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
+        <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,500;0,600;1,500&amp;display=swap"
+            rel="stylesheet" />
+        <link
+            crossorigin="anonymous"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+            referrerpolicy="no-referrer"
+            rel="stylesheet" />
+        <link href="styles.css" rel="stylesheet" />
+    </head>
+    <body class="album-page-body">
+        <header class="header scrolled">
+            <a class="logo page-link" href="index.html"><img class="logo-black"
+                    src="navkar-logo-black.png" /><img class="logo-white"
+                    src="navkar-logo-white.png" /></a>
+            <nav>
+                <a class="page-link" href="index.html">Home</a>
+                <a class="page-link" href="gallery.html">Gallery</a>
+                <a class="page-link" href="wedding.html">Wedding</a>
+                <a class="page-link" href="religious.html">Religious</a>
+            </nav>
+            <a class="book page-link" href="index.html#contact">Book a Session
+                <b aria-hidden="true" class="ui-arrow"><i
+                        class="fa-solid fa-arrow-up-right-from-square"></i></b></a>
+        </header>
+
+        <main class="album-page-main">
+            <section class="album-page-header">
+                <a class="back-link" href="religious.html">← Back to Religious</a>
+                <span class="mini-label">Religious Album</span>
+                <h1>Aarohan <em>Updhyan Tap</em></h1>
+            </section>
+
+            <section class="album-gallery-grid" data-bucket="religious-aarohan-updhyan">
+                <!-- Images load dynamically from Supabase -->
+            </section>
+        </main>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" aria-hidden="true">
+            <button id="lightboxClose" class="lightbox-close" aria-label="Close lightbox">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="lightboxImage" src="" alt="Lightbox image" />
+            <div class="lightbox-controls">
+                <button id="lightboxPrev" aria-label="Previous image">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button id="lightboxNext" aria-label="Next image">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div id="lightboxMeta" class="lightbox-meta"></div>
+        </div>
+
+        <!-- Supabase Library -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <!-- Supabase Configuration -->
+        <script src="supabase-config.js"></script>
+        <!-- Main Script -->
+        <script src="script.js"></script>
+    </body>
+</html>
