@@ -288,7 +288,7 @@ if (document.readyState === 'loading') {
   initInteractions();
 }
 
-/* Supabase Gallery Loader */
+/* Gallery Backend Loader */
 async function uploadImages() {
   if (!currentBucket || selectedFiles.length === 0) {
     showStatus('Please select a gallery and files', 'error');
@@ -304,10 +304,10 @@ async function uploadImages() {
     let result;
     if (file.type.startsWith('video/')) {
       // Upload video
-      result = await SupabaseAPI.uploadVideoToSupabase(file, currentBucket);
+      result = await window.BackendAPI.uploadVideo(file, currentBucket);
     } else {
       // Upload image
-      result = await SupabaseAPI.uploadImageToSupabase(file, currentBucket);
+      result = await window.BackendAPI.uploadImage(file, currentBucket);
     }
     if (result && !result.error) {
       uploaded++;
@@ -332,18 +332,18 @@ async function uploadImages() {
   loadGalleryPreview();
 }
 
-async function loadGalleryFromSupabase(bucketName) {
-  // Ensure Supabase API is loaded
-  if (!window.SupabaseAPI) {
+async function loadGalleryFromBackend(bucketName) {
+  // Ensure Backend API is loaded
+  if (!window.BackendAPI) {
     console.error(
-      "Supabase API not loaded. Make sure supabase-config.js is included.",
+      "Backend API not loaded. Make sure api-client.js is included.",
     );
     return;
   }
 
   try {
     // Get images from the specified bucket
-    const images = await window.SupabaseAPI.getImagesFromBucket(bucketName);
+    const images = await window.BackendAPI.getImagesFromBucket(bucketName);
     // Existing image handling
 
     // Find all gallery containers that match this bucket
@@ -378,16 +378,17 @@ async function loadGalleryFromSupabase(bucketName) {
       reinitializeLightbox();
     });
   } catch (error) {
-    console.error("Error loading gallery from Supabase:", error);
+    console.error("Error loading gallery:", error);
   }
 }
-async function loadVideosFromSupabase(bucketName, container) {
-  if (!window.SupabaseAPI) {
-    console.error('Supabase API not loaded.');
+
+async function loadVideosFromBackend(bucketName, container) {
+  if (!window.BackendAPI) {
+    console.error('Backend API not loaded. Make sure api-client.js is included.');
     return;
   }
   try {
-    const videos = await window.SupabaseAPI.getVideosFromBucket(bucketName);
+    const videos = await window.BackendAPI.getVideosFromBucket(bucketName);
     // Clear container
     container.innerHTML = '';
     if (videos.length === 0) {
@@ -420,6 +421,7 @@ async function loadVideosFromSupabase(bucketName, container) {
     console.error('Error loading videos:', err);
   }
 }
+
 /* Reinitialize lightbox with new images */
 function reinitializeLightbox() {
   const lb = $("#lightbox");
@@ -488,11 +490,11 @@ function initGalleries() {
     if (!bucket) return;
     if (container.classList.contains('film-grid')) {
       // Load videos for film-grid containers
-      loadVideosFromSupabase(bucket, container);
+      loadVideosFromBackend(bucket, container);
     } else {
       // Load images for other galleries
-      if (typeof loadGalleryFromSupabase === 'function') {
-        loadGalleryFromSupabase(bucket);
+      if (typeof loadGalleryFromBackend === 'function') {
+        loadGalleryFromBackend(bucket);
       }
     }
   });
@@ -504,18 +506,18 @@ if (document.readyState === 'loading') {
   initGalleries();
 }
 
-/* Auto-load first image from Supabase bucket as album card cover */
+/* Auto-load first image from bucket as album card cover */
 async function initCoverImages() {
   const coverEls = document.querySelectorAll('[data-cover-bucket]');
   if (!coverEls.length) return;
-  if (!window.SupabaseAPI) {
-    console.warn('SupabaseAPI not ready for cover images');
+  if (!window.BackendAPI) {
+    console.warn('BackendAPI not ready for cover images');
     return;
   }
   for (const el of coverEls) {
     const bucket = el.dataset.coverBucket;
     try {
-      const images = await window.SupabaseAPI.getImagesFromBucket(bucket);
+      const images = await window.BackendAPI.getImagesFromBucket(bucket);
       if (images && images.length > 0) {
         el.style.backgroundImage = `url('${images[0].url}')`;
       }
