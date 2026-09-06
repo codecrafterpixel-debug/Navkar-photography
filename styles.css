@@ -4142,7 +4142,7 @@ button {
   border-top: 1px solid rgba(245, 242, 236, 0.22);
   padding: 26px 0 24px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 36px;
   color: #aaa39a;
@@ -4305,4 +4305,66 @@ button {
     font-size: 12.5px;
   }
 }
- 
+
+/* Developer Credit in Footer Note */
+.developer-credit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  color: #c4bcb2;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.developer-credit img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+}
+
+.developer-credit img:hover {
+  transform: scale(1.08);
+}
+
+.developer-credit span {
+  font-family: "DM Sans", sans-serif;
+  font-size: 13.5px !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.4 !important;
+  color: #d6d0c7 !important;
+}
+
+.developer-credit strong {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+@media (max-width: 850px) {
+  .footer-note {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+  .developer-credit {
+    font-size: 12px;
+    white-space: normal;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+  .developer-credit span {
+    font-size: 12px !important;
+  }
+  .developer-credit img {
+    height: 30px;
+  }
+}
+
+
+
