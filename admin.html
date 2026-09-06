@@ -512,12 +512,8 @@
             </div>
         </div>
 
-        <!-- Supabase Library -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-        <!-- Supabase Configuration -->
-        <script src="supabase-config.js"></script>
+        <!-- API Client -->
+        <script src="api-client.js"></script>
 
         <script>
         let selectedFiles = [];
@@ -598,7 +594,12 @@
             let lastError = null;
 
             for (const file of selectedFiles) {
-                const result = await SupabaseAPI.uploadImageToSupabase(file, currentBucket);
+                let result;
+                if (file.type.startsWith('video/')) {
+                    result = await BackendAPI.uploadVideo(file, currentBucket);
+                } else {
+                    result = await BackendAPI.uploadImage(file, currentBucket);
+                }
                 if (result && !result.error) {
                     uploaded++;
                 } else if (result && result.error) {
@@ -609,9 +610,9 @@
             }
 
             if (uploaded === selectedFiles.length) {
-                showStatus(`Successfully uploaded ${uploaded}/${selectedFiles.length} images`, 'success');
+                showStatus(`Successfully uploaded ${uploaded}/${selectedFiles.length} files`, 'success');
             } else {
-                showStatus(`Uploaded ${uploaded}/${selectedFiles.length} images. Error: ${lastError || 'Unknown error'}`, 'error');
+                showStatus(`Uploaded ${uploaded}/${selectedFiles.length} files. Error: ${lastError || 'Unknown error'}`, 'error');
             }
             
             selectedFiles = [];
@@ -625,7 +626,7 @@
         async function loadGalleryPreview() {
             if (!currentBucket) return;
 
-            const images = await SupabaseAPI.getImagesFromBucket(currentBucket);
+            const images = await BackendAPI.getImagesFromBucket(currentBucket);
             const imageGrid = document.getElementById('imageGrid');
             const galleryPreview = document.getElementById('galleryPreview');
 
@@ -648,7 +649,7 @@
         async function deleteImage(bucket, fileName) {
             if (!confirm('Are you sure you want to delete this image?')) return;
 
-            const success = await SupabaseAPI.deleteImageFromSupabase(bucket, fileName);
+            const success = await BackendAPI.deleteImage(bucket, fileName);
             if (success) {
                 showStatus('Image deleted successfully', 'success');
                 loadGalleryPreview();
