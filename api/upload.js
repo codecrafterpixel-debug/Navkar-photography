@@ -1,0 +1,61 @@
+import { put } from '@vercel/blob';
+import { getDb, initDb } from './db.js';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default async function handler(req, res) {
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-filename');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { bucket, filename } = req.query;
+  const rawFileName = filename || req.headers['x-filename'] || `file-${Date.now()}.jpg`;
+
+  if (!bucket) {
+    return res.status(400).json({ error: 'Bucket parameter is required' });
+  }
+
+  try {
+    const safeFilename = rawFileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const uniquePath = `${bucket}/${Date.now()}-${safeFilename}`;
+
+    // Upload directly to Vercel Blob Storage
+    const blob = await put(uniquePath, req, {
+      access: 'public',
+      contentType: req.headers['content-type'] || 'application/octet-stream',
+    });
+
+    // Save record to Neon PostgreSQL
+    const sql = getDb();
+    await initDb();
+
+    const inserted = await sql`
+      INSERT INTO gallery_images (bucket, name, url)
+      VALUES (${bucket}, ${uniquePath}, ${blob.url})
+      RETURNING id, bucket, name, url, created_at;
+    `;
+
+    return res.status(200).json({
+      name: uniquePath,
+      url: blob.url,
+      bucket: bucket,
+      dbRecord: inserted[0]
+    });
+  } catch (error) {
+    console.error('Upload error:', error);
+    return res.status(500).json({ error: error.message || 'Upload failed' });
+  }
+}
