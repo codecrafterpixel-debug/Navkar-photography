@@ -123,8 +123,13 @@ async function uploadFile(file, bucketName) {
     if (!response.ok) {
       let errMsg = `Upload failed (${response.status})`;
       try {
-        const errorData = await response.json();
-        errMsg = errorData.error || errorData.detail || errMsg;
+        const text = await response.text();
+        try {
+          const json = JSON.parse(text);
+          errMsg = json.error || json.detail || errMsg;
+        } catch (e) {
+          if (text) errMsg = text;
+        }
       } catch (e) {}
       return { error: errMsg };
     }
