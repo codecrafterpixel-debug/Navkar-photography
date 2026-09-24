@@ -17,6 +17,59 @@ const GALLERY_BUCKETS = {
   "religious-shakrastav-aabhishek": "Shakrastav Maha Aabhishek",
 };
 
+// Automatically compress high-res DSLR photos (20MB+) into crisp 4K web images (<3.5MB) to bypass serverless limits
+async function optimizeImageForWeb(file, maxDimension = 2880, quality = 0.90) {
+  if (!file.type.startsWith("image/") || file.type === "image/gif" || file.type === "image/svg+xml") {
+    return file;
+  }
+  // If file is already smaller than 3MB, upload as-is
+  if (file.size < 3 * 1024 * 1024) {
+    return file;
+  }
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return resolve(file);
+          const optimizedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+          resolve(optimizedFile);
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => resolve(file);
+    img.src = url;
+  });
+}
+
 // Function to get all images from a bucket
 async function getImagesFromBucket(bucketName) {
   try {
@@ -54,14 +107,17 @@ async function getVideosFromBucket(bucketName) {
 // Upload file to Backend (Vercel Serverless /api/upload with Neon + Vercel Blob)
 async function uploadFile(file, bucketName) {
   try {
-    const uploadUrl = `${BACKEND_URL}/api/upload?bucket=${encodeURIComponent(bucketName)}&filename=${encodeURIComponent(file.name)}`;
+    // Automatically optimize large photos so they don't exceed the 4.5MB Vercel serverless limit
+    const fileToUpload = await optimizeImageForWeb(file);
+
+    const uploadUrl = `${BACKEND_URL}/api/upload?bucket=${encodeURIComponent(bucketName)}&filename=${encodeURIComponent(fileToUpload.name)}`;
     const response = await fetch(uploadUrl, {
       method: "POST",
       headers: {
-        "Content-Type": file.type || "application/octet-stream",
-        "x-filename": file.name,
+        "Content-Type": fileToUpload.type || "application/octet-stream",
+        "x-filename": fileToUpload.name,
       },
-      body: file,
+      body: fileToUpload,
     });
 
     if (!response.ok) {
