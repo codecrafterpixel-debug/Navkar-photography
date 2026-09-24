@@ -1,5 +1,6 @@
 import { del } from '@vercel/blob';
 import { getDb, initDb } from './db.js';
+import { getBlobToken } from './upload.js';
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -35,9 +36,11 @@ export default async function handler(req, res) {
       LIMIT 1;
     `;
 
+    const blobToken = getBlobToken();
+
     if (records.length > 0 && records[0].url) {
       try {
-        await del(records[0].url);
+        await del(records[0].url, blobToken ? { token: blobToken } : undefined);
       } catch (blobErr) {
         console.warn('Vercel blob delete warning:', blobErr);
       }
