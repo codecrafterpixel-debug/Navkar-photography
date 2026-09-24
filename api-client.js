@@ -1,8 +1,11 @@
 // Navkar Photography API Client
-// Automatically supports Vercel Serverless Functions + Neon Postgres or Local Python Backend
+// Connected to live Vercel Backend: https://navkar-photography.vercel.app
 
-const IS_LOCAL_PYTHON = window.location.port === "8000";
-const BACKEND_URL = IS_LOCAL_PYTHON ? "http://localhost:8000" : "";
+const LIVE_VERCEL_URL = "https://navkar-photography.vercel.app";
+
+// Auto-detect environment: if running on local file / dev server, use live Vercel endpoint
+const isLocal = !window.location.hostname || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const BACKEND_URL = isLocal ? LIVE_VERCEL_URL : "";
 
 // Gallery bucket mapping
 const GALLERY_BUCKETS = {
@@ -17,15 +20,12 @@ const GALLERY_BUCKETS = {
 // Function to get all images from a bucket
 async function getImagesFromBucket(bucketName) {
   try {
-    // 1. Try Vercel Serverless /api/list route
-    let response = await fetch(`${BACKEND_URL}/api/list?bucket=${encodeURIComponent(bucketName)}`);
-    
-    // If not found (e.g. running local FastAPI backend), fallback to /list/
-    if (response.status === 404) {
-      response = await fetch(`http://localhost:8000/list/${bucketName}`);
+    const url = `${BACKEND_URL}/api/list?bucket=${encodeURIComponent(bucketName)}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${response.status}`);
     }
-
-    if (!response.ok) throw new Error("Failed to fetch images");
     const data = await response.json();
     return data.filter((file) => /\.(jpg|jpeg|png|webp|gif|avif)$/i.test(file.name || file.url));
   } catch (err) {
@@ -37,11 +37,12 @@ async function getImagesFromBucket(bucketName) {
 // Get videos from bucket
 async function getVideosFromBucket(bucketName) {
   try {
-    let response = await fetch(`${BACKEND_URL}/api/list?bucket=${encodeURIComponent(bucketName)}`);
-    if (response.status === 404) {
-      response = await fetch(`http://localhost:8000/list/${bucketName}`);
+    const url = `${BACKEND_URL}/api/list?bucket=${encodeURIComponent(bucketName)}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${response.status}`);
     }
-    if (!response.ok) throw new Error("Failed to fetch videos");
     const data = await response.json();
     return data.filter((file) => /\.(mp4|webm|mov)$/i.test(file.name || file.url));
   } catch (err) {
@@ -53,31 +54,18 @@ async function getVideosFromBucket(bucketName) {
 // Upload file to Backend (Vercel Serverless /api/upload with Neon + Vercel Blob)
 async function uploadFile(file, bucketName) {
   try {
-    // Send binary directly to /api/upload
-    let response = await fetch(
-      `${BACKEND_URL}/api/upload?bucket=${encodeURIComponent(bucketName)}&filename=${encodeURIComponent(file.name)}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": file.type || "application/octet-stream",
-          "x-filename": file.name,
-        },
-        body: file,
-      }
-    );
-
-    // Fallback to local python multipart backend if 404
-    if (response.status === 404) {
-      const formData = new FormData();
-      formData.append("file", file);
-      response = await fetch(`http://localhost:8000/upload/${bucketName}`, {
-        method: "POST",
-        body: formData,
-      });
-    }
+    const uploadUrl = `${BACKEND_URL}/api/upload?bucket=${encodeURIComponent(bucketName)}&filename=${encodeURIComponent(file.name)}`;
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": file.type || "application/octet-stream",
+        "x-filename": file.name,
+      },
+      body: file,
+    });
 
     if (!response.ok) {
-      let errMsg = "Upload failed";
+      let errMsg = `Upload failed (${response.status})`;
       try {
         const errorData = await response.json();
         errMsg = errorData.error || errorData.detail || errMsg;
@@ -108,18 +96,10 @@ function getPublicImageUrl(bucketName, fileName) {
 // Delete file
 async function deleteImage(bucketName, fileName) {
   try {
-    let response = await fetch(
-      `${BACKEND_URL}/api/delete?bucket=${encodeURIComponent(bucketName)}&name=${encodeURIComponent(fileName)}`,
-      {
-        method: "DELETE",
-      }
-    );
-
-    if (response.status === 404) {
-      response = await fetch(`http://localhost:8000/delete/${bucketName}/${fileName}`, {
-        method: "DELETE",
-      });
-    }
+    const deleteUrl = `${BACKEND_URL}/api/delete?bucket=${encodeURIComponent(bucketName)}&name=${encodeURIComponent(fileName)}`;
+    const response = await fetch(deleteUrl, {
+      method: "DELETE",
+    });
 
     if (!response.ok) {
       console.error("Delete error");
